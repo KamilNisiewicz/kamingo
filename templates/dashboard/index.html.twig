@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Panel - Kamingo{% endblock %}
+
+{% block body %}
+<div class="max-w-4xl mx-auto">
+    {# Welcome Message #}
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Witaj, {{ user.username }}!</h1>
+        <p class="mt-2 text-gray-600">Wybierz sesję, aby rozpocząć naukę</p>
+    </div>
+
+    {# Session Cards #}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        {# Programming Session Card #}
+        <div class="bg-gradient-to-br from-programming-50 to-white border-2 border-programming-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-programming-500 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                    </svg>
+                </div>
+                <h2 class="ml-4 text-xl font-bold text-gray-900">Programming</h2>
+            </div>
+
+            <p class="text-gray-600 mb-4">Słownictwo techniczne dla programistów</p>
+
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-sm text-gray-600">5 nowych + 0 do powtórki</span>
+                <span class="text-xs text-gray-500">~10 min</span>
+            </div>
+
+            <button class="w-full bg-programming-600 hover:bg-programming-700 text-white font-medium py-3 px-4 rounded-lg transition-colors">
+                Rozpocznij sesję
+            </button>
+
+            <p class="text-xs text-gray-500 mt-2 text-center">Wkrótce...</p>
+        </div>
+
+        {# Travel Session Card #}
+        <div class="bg-gradient-to-br from-travel-50 to-white border-2 border-travel-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-travel-500 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h2 class="ml-4 text-xl font-bold text-gray-900">Travel</h2>
+            </div>
+
+            <p class="text-gray-600 mb-4">Praktyczne zwroty dla podróżników</p>
+
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-sm text-gray-600">5 nowych + 0 do powtórki</span>
+                <span class="text-xs text-gray-500">~10 min</span>
+            </div>
+
+            <button class="w-full bg-travel-600 hover:bg-travel-700 text-white font-medium py-3 px-4 rounded-lg transition-colors">
+                Rozpocznij sesję
+            </button>
+
+            <p class="text-xs text-gray-500 mt-2 text-center">Wkrótce...</p>
+        </div>
+    </div>
+
+    {# Progress Indicator #}
+    <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-900">Dzisiejszy postęp</h3>
+            <span class="text-sm font-medium text-gray-600">0/2 sesji</span>
+        </div>
+
+        <div class="w-full bg-gray-200 rounded-full h-3">
+            <div class="bg-blue-600 h-3 rounded-full" style="width: 0%"></div>
+        </div>
+
+        <p class="mt-4 text-sm text-gray-600">
+            Ukończ obie sesje dzisiaj, aby osiągnąć "Perfekcyjny dzień!"
+        </p>
+    </div>
+</div>
+{% endblock %}
