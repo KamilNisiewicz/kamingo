@@ -30,11 +30,9 @@
                 <span class="text-xs text-gray-500">~10 min</span>
             </div>
 
-            <button class="w-full bg-programming-600 hover:bg-programming-700 text-white font-medium py-3 px-4 rounded-lg transition-colors">
+            <a href="{{ path('app_learn_programming') }}" class="block w-full bg-programming-600 hover:bg-programming-700 text-white font-medium py-3 px-4 rounded-lg transition-colors text-center">
                 Rozpocznij sesję
-            </button>
-
-            <p class="text-xs text-gray-500 mt-2 text-center">Wkrótce...</p>
+            </a>
         </div>
 
         {# Travel Session Card #}
@@ -55,11 +53,9 @@
                 <span class="text-xs text-gray-500">~10 min</span>
             </div>
 
-            <button class="w-full bg-travel-600 hover:bg-travel-700 text-white font-medium py-3 px-4 rounded-lg transition-colors">
+            <a href="{{ path('app_learn_travel') }}" class="block w-full bg-travel-600 hover:bg-travel-700 text-white font-medium py-3 px-4 rounded-lg transition-colors text-center">
                 Rozpocznij sesję
-            </button>
-
-            <p class="text-xs text-gray-500 mt-2 text-center">Wkrótce...</p>
+            </a>
         </div>
     </div>
 
@@ -67,16 +63,22 @@
     <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-semibold text-gray-900">Dzisiejszy postęp</h3>
-            <span class="text-sm font-medium text-gray-600">0/2 sesji</span>
+            <span class="text-sm font-medium text-gray-600">{{ completed_sessions }}/{{ total_sessions }} sesji</span>
         </div>
 
         <div class="w-full bg-gray-200 rounded-full h-3">
-            <div class="bg-blue-600 h-3 rounded-full" style="width: 0%"></div>
+            <div class="bg-blue-600 h-3 rounded-full" style="width: {{ (completed_sessions / total_sessions * 100)|round }}%"></div>
         </div>
 
-        <p class="mt-4 text-sm text-gray-600">
-            Ukończ obie sesje dzisiaj, aby osiągnąć "Perfekcyjny dzień!"
-        </p>
+        {% if completed_sessions >= total_sessions %}
+            <p class="mt-4 text-sm font-bold text-green-600">
+                🎉 Perfekcyjny dzień! Ukończyłeś obie sesje!
+            </p>
+        {% else %}
+            <p class="mt-4 text-sm text-gray-600">
+                Ukończ obie sesje dzisiaj, aby osiągnąć "Perfekcyjny dzień!"
+            </p>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

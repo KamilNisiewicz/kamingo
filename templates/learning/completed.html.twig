@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sesja ukończona - Kamingo{% endblock %}
+
+{% block body %}
+<div class="max-w-2xl mx-auto">
+    {# Success Card #}
+    <div class="bg-white rounded-lg shadow-lg p-8 text-center">
+        {# Success Icon #}
+        <div class="mb-6">
+            <div class="w-20 h-20 {% if category == 'programming' %}bg-programming-100{% else %}bg-travel-100{% endif %} rounded-full flex items-center justify-center mx-auto">
+                <svg class="w-12 h-12 {% if category == 'programming' %}text-programming-600{% else %}text-travel-600{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+        </div>
+
+        {# Congratulations Message #}
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">
+            Gratulacje! 🎉
+        </h1>
+        <p class="text-lg text-gray-600 mb-6">
+            Ukończyłeś sesję {{ category == 'programming' ? 'Programming' : 'Travel' }}
+        </p>
+
+        {# Stats #}
+        <div class="bg-gray-50 rounded-lg p-6 mb-8">
+            <div class="grid grid-cols-1 gap-4">
+                <div>
+                    <p class="text-sm text-gray-600 mb-1">Przeszedłeś przez</p>
+                    <p class="text-4xl font-bold {% if category == 'programming' %}text-programming-600{% else %}text-travel-600{% endif %}">
+                        {{ total_cards }}
+                    </p>
+                    <p class="text-sm text-gray-600">{{ total_cards == 1 ? 'kartę' : (total_cards < 5 ? 'karty' : 'kart') }}</p>
+                </div>
+            </div>
+        </div>
+
+        {# Motivational Message #}
+        <div class="mb-6 p-4 bg-blue-50 rounded-lg">
+            <p class="text-sm text-blue-800">
+                {% if total_cards >= 20 %}
+                    Wspaniała robota! Pełna sesja ukończona. 💪
+                {% elseif total_cards >= 10 %}
+                    Świetna robota! Kontynuuj codzienną naukę. 👏
+                {% else %}
+                    Dobry start! Wracaj jutro po więcej słówek. 🚀
+                {% endif %}
+            </p>
+        </div>
+
+        {# Action Buttons #}
+        <div class="space-y-3">
+            <a href="{{ path('app_dashboard') }}"
+               class="block w-full {% if category == 'programming' %}bg-programming-600 hover:bg-programming-700{% else %}bg-travel-600 hover:bg-travel-700{% endif %} text-white font-medium py-3 px-6 rounded-lg transition">
+                Wróć do Dashboard
+            </a>
+
+            {% if category == 'programming' %}
+                <a href="{{ path('app_learn_travel') }}"
+                   class="block w-full bg-travel-100 hover:bg-travel-200 text-travel-700 font-medium py-3 px-6 rounded-lg transition">
+                    Rozpocznij sesję Travel
+                </a>
+            {% else %}
+                <a href="{{ path('app_learn_programming') }}"
+                   class="block w-full bg-programming-100 hover:bg-programming-200 text-programming-700 font-medium py-3 px-6 rounded-lg transition">
+                    Rozpocznij sesję Programming
+                </a>
+            {% endif %}
+        </div>
+
+        {# Next Review Info #}
+        <div class="mt-8 text-sm text-gray-500">
+            <p>Twoje słówka wrócą do powtórki w odpowiednich interwałach (1d, 3d, 7d, 14d, 30d)</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
