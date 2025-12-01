@@ -60,6 +60,11 @@
                         <a href="{{ path('app_dashboard') }}" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
                             Panel
                         </a>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('admin') }}" class="text-blue-600 hover:text-blue-800 px-3 py-2 rounded-md text-sm font-medium">
+                                Admin
+                            </a>
+                        {% endif %}
                         <span class="text-gray-500 text-sm">
                             {{ app.user.username }}
                         </span>
