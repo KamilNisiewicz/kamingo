@@ -120,16 +120,18 @@
                 ← Wróć do Dashboard
             </a>
 
-            {% if category == 'programming' %}
-                <a href="{{ path('app_learn_travel') }}"
-                   class="btn-hover-lift block w-full bg-gradient-to-br from-travel-50 to-travel-100 hover:from-travel-100 hover:to-travel-200 text-travel-800 font-bold py-5 px-8 rounded-xl transition-all border-2 border-travel-300 text-lg">
-                    ✈️ Rozpocznij sesję Travel →
-                </a>
-            {% else %}
-                <a href="{{ path('app_learn_programming') }}"
-                   class="btn-hover-lift block w-full bg-gradient-to-br from-programming-50 to-programming-100 hover:from-programming-100 hover:to-programming-200 text-programming-800 font-bold py-5 px-8 rounded-xl transition-all border-2 border-programming-300 text-lg">
-                    💻 Rozpocznij sesję Programming →
-                </a>
+            {% if not other_category_completed %}
+                {% if category == 'programming' %}
+                    <a href="{{ path('app_learn_travel') }}"
+                       class="btn-hover-lift block w-full bg-gradient-to-br from-travel-50 to-travel-100 hover:from-travel-100 hover:to-travel-200 text-travel-800 font-bold py-5 px-8 rounded-xl transition-all border-2 border-travel-300 text-lg">
+                        ✈️ Rozpocznij sesję Travel →
+                    </a>
+                {% else %}
+                    <a href="{{ path('app_learn_programming') }}"
+                       class="btn-hover-lift block w-full bg-gradient-to-br from-programming-50 to-programming-100 hover:from-programming-100 hover:to-programming-200 text-programming-800 font-bold py-5 px-8 rounded-xl transition-all border-2 border-programming-300 text-lg">
+                        💻 Rozpocznij sesję Programming →
+                    </a>
+                {% endif %}
             {% endif %}
         </div>
 

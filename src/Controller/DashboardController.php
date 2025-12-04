@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\WordCategory;
+use App\Repository\SessionCompletionRepository;
 use App\Repository\UserProgressRepository;
 use App\Service\WordSelectionService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,6 +17,7 @@ class DashboardController extends AbstractController
     public function __construct(
         private UserProgressRepository $userProgressRepository,
         private WordSelectionService $wordSelectionService,
+        private SessionCompletionRepository $sessionCompletionRepository,
     ) {
     }
 
@@ -24,20 +26,10 @@ class DashboardController extends AbstractController
     {
         $user = $this->getUser();
         $today = new \DateTimeImmutable('today');
-        $tomorrow = $today->modify('+1 day');
 
-        // Sprawdź ile sesji ukończono dzisiaj
-        $completedSessions = $this->userProgressRepository->createQueryBuilder('up')
-            ->select('COUNT(DISTINCT w.category) as sessions_count')
-            ->join('up.word', 'w')
-            ->where('up.user = :user')
-            ->andWhere('up.lastReviewedAt >= :today')
-            ->andWhere('up.lastReviewedAt < :tomorrow')
-            ->setParameter('user', $user)
-            ->setParameter('today', $today)
-            ->setParameter('tomorrow', $tomorrow)
-            ->getQuery()
-            ->getSingleScalarResult();
+        // Pobierz ukończone sesje z BAZY DANYCH
+        $completedSessionsToday = $this->sessionCompletionRepository->findCompletedSessionsForDate($user, $today);
+        $completedSessions = count($completedSessionsToday);
 
         // Policz dostępne słówka dla każdej kategorii
         $programmingNew = count($this->wordSelectionService->selectNewWords($user, WordCategory::PROGRAMMING, 5));
@@ -46,18 +38,8 @@ class DashboardController extends AbstractController
         $travelNew = count($this->wordSelectionService->selectNewWords($user, WordCategory::TRAVEL, 5));
         $travelReview = count($this->wordSelectionService->selectWordsForReview($user, WordCategory::TRAVEL, $today, 15));
 
-        // Sprawdź które sesje zostały ukończone dzisiaj
-        $completedCategories = $this->userProgressRepository->createQueryBuilder('up')
-            ->select('DISTINCT w.category')
-            ->join('up.word', 'w')
-            ->where('up.user = :user')
-            ->andWhere('up.lastReviewedAt >= :today')
-            ->andWhere('up.lastReviewedAt < :tomorrow')
-            ->setParameter('user', $user)
-            ->setParameter('today', $today)
-            ->setParameter('tomorrow', $tomorrow)
-            ->getQuery()
-            ->getSingleColumnResult();
+        // Completed categories z bazy danych
+        $completedCategories = array_map(fn($sc) => $sc->getCategory(), $completedSessionsToday);
 
         return $this->render('dashboard/index.html.twig', [
             'user' => $user,

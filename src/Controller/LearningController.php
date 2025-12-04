@@ -2,10 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\SessionCompletion;
 use App\Entity\WordCategory;
+use App\Repository\SessionCompletionRepository;
 use App\Repository\WordRepository;
 use App\Service\SpacedRepetitionService;
 use App\Service\WordSelectionService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,6 +23,8 @@ class LearningController extends AbstractController
         private WordSelectionService $wordSelectionService,
         private SpacedRepetitionService $spacedRepetitionService,
         private WordRepository $wordRepository,
+        private SessionCompletionRepository $sessionCompletionRepository,
+        private EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -164,12 +169,34 @@ class LearningController extends AbstractController
             return $this->redirectToRoute('app_dashboard');
         }
 
+        $user = $this->getUser();
+        $today = new \DateTimeImmutable('today');
+
+        // Zapisz informację że ta kategoria została ukończona dzisiaj (do bazy!)
+        $sessionCompletion = new SessionCompletion();
+        $sessionCompletion->setUser($user);
+        $sessionCompletion->setCategory($completedData['category']);
+        $sessionCompletion->setCompletedDate($today);
+
+        try {
+            $this->entityManager->persist($sessionCompletion);
+            $this->entityManager->flush();
+        } catch (\Exception $e) {
+            // Jeśli już istnieje (unique constraint), ignoruj błąd
+            // Oznacza to że sesja już była completed dzisiaj
+        }
+
         // Usuń dane z sesji po wyświetleniu
         $session->remove('session_completed');
+
+        // Sprawdź która druga sesja nie jest ukończona
+        $otherCategory = $completedData['category'] === 'programming' ? 'travel' : 'programming';
+        $otherCategoryCompleted = $this->sessionCompletionRepository->isSessionCompletedToday($user, $otherCategory, $today);
 
         return $this->render('learning/completed.html.twig', [
             'category' => $completedData['category'],
             'total_cards' => $completedData['total_cards'],
+            'other_category_completed' => $otherCategoryCompleted,
         ]);
     }
 }
