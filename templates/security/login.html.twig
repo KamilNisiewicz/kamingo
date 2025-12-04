@@ -3,20 +3,26 @@
 {% block title %}Logowanie - Kamingo{% endblock %}
 
 {% block body %}
-<div class="max-w-md mx-auto">
-    <div class="bg-white shadow-md rounded-lg p-8">
-        <h1 class="text-2xl font-bold text-gray-900 mb-6 text-center">Logowanie</h1>
+<div class="max-w-md mx-auto px-4">
+    <div class="bg-gradient-to-br from-white to-gray-50 shadow-2xl rounded-2xl p-8 sm:p-10 border-2 border-gray-200">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 mb-2">
+                Zaloguj się
+            </h1>
+            <p class="text-gray-600">do Kamingo</p>
+        </div>
 
         {% if error %}
-            <div class="bg-red-50 border border-red-200 rounded-md p-4 mb-4">
-                <p class="text-sm text-red-800">{{ error.messageKey|trans(error.messageData, 'security') }}</p>
+            <div class="bg-gradient-to-r from-red-50 to-rose-50 border-2 border-red-300 rounded-xl p-4 mb-6 flex items-center gap-3">
+                <span class="text-2xl">❌</span>
+                <p class="text-sm font-medium text-red-900">{{ error.messageKey|trans(error.messageData, 'security') }}</p>
             </div>
         {% endif %}
 
         <form method="post">
-            <div class="mb-4">
-                <label for="username" class="block text-sm font-medium text-gray-700 mb-2">
-                    Login
+            <div class="mb-6">
+                <label for="username" class="block text-sm font-bold text-gray-700 mb-2">
+                    👤 Login
                 </label>
                 <input
                     type="text"
@@ -25,35 +31,36 @@
                     value="{{ last_username }}"
                     required
                     autofocus
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 font-medium"
                     placeholder="kamil"
                 >
             </div>
 
-            <div class="mb-6">
-                <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
-                    Hasło
+            <div class="mb-8">
+                <label for="password" class="block text-sm font-bold text-gray-700 mb-2">
+                    🔒 Hasło
                 </label>
                 <input
                     type="password"
                     id="password"
                     name="_password"
                     required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 font-medium"
                     placeholder="••••••••"
                 >
             </div>
 
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors">
-                Zaloguj się
+            <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-lg">
+                Zaloguj się →
             </button>
         </form>
 
-        <div class="mt-6 text-center">
-            <p class="text-sm text-gray-600">
-                Konto testowe: <strong>tester</strong> (hasło: tester123)
+        <div class="mt-8 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-200">
+            <p class="text-sm text-center text-gray-700">
+                <span class="font-semibold">Konto testowe:</span><br>
+                Login: <strong class="text-blue-700">tester</strong> • Hasło: <strong class="text-blue-700">tester123</strong>
             </p>
         </div>
     </div>

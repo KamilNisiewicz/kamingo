@@ -2,77 +2,141 @@
 
 {% block title %}Sesja ukończona - Kamingo{% endblock %}
 
+{% block stylesheets %}
+<style>
+    @keyframes confetti-fall {
+        0% {
+            transform: translateY(-100vh) rotate(0deg);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(100vh) rotate(720deg);
+            opacity: 0;
+        }
+    }
+
+    @keyframes success-bounce {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.1);
+        }
+    }
+
+    .success-icon {
+        animation: success-bounce 0.6s ease-in-out;
+    }
+
+    .btn-hover-lift {
+        transition: all 0.3s ease;
+    }
+
+    .btn-hover-lift:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+    }
+</style>
+{% endblock %}
+
 {% block body %}
-<div class="max-w-2xl mx-auto">
+<div class="max-w-3xl mx-auto px-4 sm:px-6">
     {# Success Card #}
-    <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-        {# Success Icon #}
-        <div class="mb-6">
-            <div class="w-20 h-20 {% if category == 'programming' %}bg-programming-100{% else %}bg-travel-100{% endif %} rounded-full flex items-center justify-center mx-auto">
-                <svg class="w-12 h-12 {% if category == 'programming' %}text-programming-600{% else %}text-travel-600{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
+    <div class="bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-2xl p-8 sm:p-12 text-center border-2 {% if category == 'programming' %}border-programming-200{% else %}border-travel-200{% endif %}">
+        {# Success Icon with animation #}
+        <div class="mb-8 success-icon">
+            <div class="w-32 h-32 bg-gradient-to-br {% if category == 'programming' %}from-programming-400 to-programming-600{% else %}from-travel-400 to-travel-600{% endif %} rounded-full flex items-center justify-center mx-auto shadow-2xl">
+                <span class="text-7xl">🎉</span>
             </div>
         </div>
 
         {# Congratulations Message #}
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">
-            Gratulacje! 🎉
+        <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
+            Gratulacje!
         </h1>
-        <p class="text-lg text-gray-600 mb-6">
-            Ukończyłeś sesję {{ category == 'programming' ? 'Programming' : 'Travel' }}
+        <p class="text-xl sm:text-2xl text-gray-700 mb-8 font-medium">
+            Ukończyłeś sesję <span class="{% if category == 'programming' %}text-programming-700{% else %}text-travel-700{% endif %}">{{ category == 'programming' ? '💻 Programming' : '✈️ Travel' }}</span>
         </p>
 
-        {# Stats #}
-        <div class="bg-gray-50 rounded-lg p-6 mb-8">
-            <div class="grid grid-cols-1 gap-4">
+        {# Stats Card #}
+        <div class="bg-gradient-to-br {% if category == 'programming' %}from-programming-50 to-programming-100{% else %}from-travel-50 to-travel-100{% endif %} rounded-2xl p-8 mb-8 border-2 {% if category == 'programming' %}border-programming-200{% else %}border-travel-200{% endif %}">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <div>
-                    <p class="text-sm text-gray-600 mb-1">Przeszedłeś przez</p>
-                    <p class="text-4xl font-bold {% if category == 'programming' %}text-programming-600{% else %}text-travel-600{% endif %}">
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Przejrzane karty</p>
+                    <p class="text-5xl font-bold {% if category == 'programming' %}text-programming-700{% else %}text-travel-700{% endif %}">
                         {{ total_cards }}
                     </p>
-                    <p class="text-sm text-gray-600">{{ total_cards == 1 ? 'kartę' : (total_cards < 5 ? 'karty' : 'kart') }}</p>
+                    <p class="text-sm text-gray-600 mt-1">{{ total_cards == 1 ? 'karta' : (total_cards < 5 ? 'karty' : 'kart') }}</p>
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Czas sesji</p>
+                    <p class="text-5xl font-bold text-gray-700">
+                        ~{{ (total_cards * 0.5)|round }}
+                    </p>
+                    <p class="text-sm text-gray-600 mt-1">minut</p>
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Interwały</p>
+                    <p class="text-3xl font-bold text-gray-700 leading-tight">
+                        1d → 3d<br>→ 7d
+                    </p>
+                    <p class="text-xs text-gray-500 mt-1">spaced repetition</p>
                 </div>
             </div>
         </div>
 
-        {# Motivational Message #}
-        <div class="mb-6 p-4 bg-blue-50 rounded-lg">
-            <p class="text-sm text-blue-800">
-                {% if total_cards >= 20 %}
-                    Wspaniała robota! Pełna sesja ukończona. 💪
-                {% elseif total_cards >= 10 %}
-                    Świetna robota! Kontynuuj codzienną naukę. 👏
-                {% else %}
-                    Dobry start! Wracaj jutro po więcej słówek. 🚀
-                {% endif %}
+        {# Motivational Message - losowy z kilku opcji #}
+        {% set messages = [
+            {emoji: '💪', text: 'Wspaniała robota! Każda karta przybliża Cię do biegłości.'},
+            {emoji: '🚀', text: 'Świetnie Ci idzie! Konsekwencja to klucz do sukcesu.'},
+            {emoji: '⭐', text: 'Jesteś na dobrej drodze! Kontynuuj codzienną naukę.'},
+            {emoji: '🎯', text: 'Perfekcyjnie! Regularność przynosi najlepsze rezultaty.'},
+            {emoji: '🔥', text: 'Niesamowite tempo! Twój progres jest imponujący.'}
+        ] %}
+        {% set randomMessage = messages[random(0, messages|length - 1)] %}
+
+        <div class="mb-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border-2 border-blue-200">
+            <p class="text-lg font-semibold text-blue-900 flex items-center justify-center gap-3">
+                <span class="text-3xl">{{ randomMessage.emoji }}</span>
+                <span>{{ randomMessage.text }}</span>
+            </p>
+        </div>
+
+        {# Next Review Info #}
+        <div class="mb-8 p-5 bg-white rounded-xl border border-gray-200 shadow-sm">
+            <p class="text-sm font-semibold text-gray-700 mb-2">
+                📅 Kiedy wrócą Twoje słówka?
+            </p>
+            <p class="text-sm text-gray-600 leading-relaxed">
+                Algorytm spaced repetition automatycznie zaplanuje powtórki w optymalnych interwałach:
+                <span class="font-semibold">1 dzień → 3 dni → 7 dni → 14 dni → 30 dni</span>
             </p>
         </div>
 
         {# Action Buttons #}
-        <div class="space-y-3">
+        <div class="space-y-4">
             <a href="{{ path('app_dashboard') }}"
-               class="block w-full {% if category == 'programming' %}bg-programming-600 hover:bg-programming-700{% else %}bg-travel-600 hover:bg-travel-700{% endif %} text-white font-medium py-3 px-6 rounded-lg transition">
-                Wróć do Dashboard
+               class="btn-hover-lift block w-full bg-gradient-to-r {% if category == 'programming' %}from-programming-600 to-programming-700 hover:from-programming-700 hover:to-programming-800{% else %}from-travel-600 to-travel-700 hover:from-travel-700 hover:to-travel-800{% endif %} text-white font-bold py-5 px-8 rounded-xl transition-all shadow-lg text-lg">
+                ← Wróć do Dashboard
             </a>
 
             {% if category == 'programming' %}
                 <a href="{{ path('app_learn_travel') }}"
-                   class="block w-full bg-travel-100 hover:bg-travel-200 text-travel-700 font-medium py-3 px-6 rounded-lg transition">
-                    Rozpocznij sesję Travel
+                   class="btn-hover-lift block w-full bg-gradient-to-br from-travel-50 to-travel-100 hover:from-travel-100 hover:to-travel-200 text-travel-800 font-bold py-5 px-8 rounded-xl transition-all border-2 border-travel-300 text-lg">
+                    ✈️ Rozpocznij sesję Travel →
                 </a>
             {% else %}
                 <a href="{{ path('app_learn_programming') }}"
-                   class="block w-full bg-programming-100 hover:bg-programming-200 text-programming-700 font-medium py-3 px-6 rounded-lg transition">
-                    Rozpocznij sesję Programming
+                   class="btn-hover-lift block w-full bg-gradient-to-br from-programming-50 to-programming-100 hover:from-programming-100 hover:to-programming-200 text-programming-800 font-bold py-5 px-8 rounded-xl transition-all border-2 border-programming-300 text-lg">
+                    💻 Rozpocznij sesję Programming →
                 </a>
             {% endif %}
         </div>
 
-        {# Next Review Info #}
-        <div class="mt-8 text-sm text-gray-500">
-            <p>Twoje słówka wrócą do powtórki w odpowiednich interwałach (1d, 3d, 7d, 14d, 30d)</p>
-        </div>
+        {# Small hint #}
+        <p class="mt-8 text-xs text-gray-500">
+            Tip: Codzienne sesje zwiększają retencję o 70% w porównaniu do nieregularnej nauki! 📈
+        </p>
     </div>
 </div>
 {% endblock %}

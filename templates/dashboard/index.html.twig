@@ -2,83 +2,189 @@
 
 {% block title %}Panel - Kamingo{% endblock %}
 
+{% block stylesheets %}
+<style>
+    .session-card {
+        transition: all 0.3s ease;
+    }
+
+    .session-card:not(.disabled):hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    .session-card.disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+
+    .progress-bar-animated {
+        transition: width 0.8s ease-in-out;
+    }
+</style>
+{% endblock %}
+
 {% block body %}
-<div class="max-w-4xl mx-auto">
+<div class="max-w-5xl mx-auto px-4 sm:px-6">
     {# Welcome Message #}
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Witaj, {{ user.username }}!</h1>
-        <p class="mt-2 text-gray-600">Wybierz sesję, aby rozpocząć naukę</p>
+    <div class="mb-10 text-center sm:text-left">
+        <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-3">
+            Witaj, {{ user.username }}! 👋
+        </h1>
+        <p class="text-lg text-gray-600">
+            {{ current_date|date('l, j F Y') }} • Wybierz sesję, aby rozpocząć naukę
+        </p>
     </div>
 
-    {# Session Cards #}
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        {# Programming Session Card #}
-        <div class="bg-gradient-to-br from-programming-50 to-white border-2 border-programming-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
-            <div class="flex items-center mb-4">
-                <div class="w-12 h-12 bg-programming-500 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-                    </svg>
-                </div>
-                <h2 class="ml-4 text-xl font-bold text-gray-900">Programming</h2>
-            </div>
-
-            <p class="text-gray-600 mb-4">Słownictwo techniczne dla programistów</p>
-
-            <div class="flex items-center justify-between mb-4">
-                <span class="text-sm text-gray-600">5 nowych + 0 do powtórki</span>
-                <span class="text-xs text-gray-500">~10 min</span>
-            </div>
-
-            <a href="{{ path('app_learn_programming') }}" class="block w-full bg-programming-600 hover:bg-programming-700 text-white font-medium py-3 px-4 rounded-lg transition-colors text-center">
-                Rozpocznij sesję
-            </a>
-        </div>
-
-        {# Travel Session Card #}
-        <div class="bg-gradient-to-br from-travel-50 to-white border-2 border-travel-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
-            <div class="flex items-center mb-4">
-                <div class="w-12 h-12 bg-travel-500 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </div>
-                <h2 class="ml-4 text-xl font-bold text-gray-900">Travel</h2>
-            </div>
-
-            <p class="text-gray-600 mb-4">Praktyczne zwroty dla podróżników</p>
-
-            <div class="flex items-center justify-between mb-4">
-                <span class="text-sm text-gray-600">5 nowych + 0 do powtórki</span>
-                <span class="text-xs text-gray-500">~10 min</span>
-            </div>
-
-            <a href="{{ path('app_learn_travel') }}" class="block w-full bg-travel-600 hover:bg-travel-700 text-white font-medium py-3 px-4 rounded-lg transition-colors text-center">
-                Rozpocznij sesję
-            </a>
-        </div>
-    </div>
-
-    {# Progress Indicator #}
-    <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+    {# Progress Indicator - na górze dla lepszej widoczności #}
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-6 mb-8 shadow-sm">
         <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Dzisiejszy postęp</h3>
-            <span class="text-sm font-medium text-gray-600">{{ completed_sessions }}/{{ total_sessions }} sesji</span>
+            <h3 class="text-xl font-bold text-gray-900">📊 Dzisiejszy postęp</h3>
+            <span class="text-2xl font-bold {% if completed_sessions >= total_sessions %}text-green-600{% elseif completed_sessions > 0 %}text-yellow-600{% else %}text-gray-500{% endif %}">
+                {{ completed_sessions }}/{{ total_sessions }}
+            </span>
         </div>
 
-        <div class="w-full bg-gray-200 rounded-full h-3">
-            <div class="bg-blue-600 h-3 rounded-full" style="width: {{ (completed_sessions / total_sessions * 100)|round }}%"></div>
+        <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden shadow-inner">
+            <div class="progress-bar-animated h-4 rounded-full bg-gradient-to-r {% if completed_sessions >= total_sessions %}from-green-500 to-emerald-600{% elseif completed_sessions > 0 %}from-yellow-500 to-amber-600{% else %}from-gray-400 to-gray-500{% endif %}"
+                 style="width: {{ (completed_sessions / total_sessions * 100)|round }}%"></div>
         </div>
 
         {% if completed_sessions >= total_sessions %}
-            <p class="mt-4 text-sm font-bold text-green-600">
-                🎉 Perfekcyjny dzień! Ukończyłeś obie sesje!
+            <div class="mt-4 flex items-center gap-2 text-green-700 font-semibold">
+                <span class="text-2xl">🎉</span>
+                <span class="text-lg">Perfekcyjny dzień! Ukończyłeś obie sesje!</span>
+            </div>
+        {% elseif completed_sessions > 0 %}
+            <p class="mt-4 text-amber-700 font-medium">
+                Świetny start! Ukończ drugą sesję, aby zdobyć "Perfekcyjny dzień!" 💪
             </p>
         {% else %}
-            <p class="mt-4 text-sm text-gray-600">
-                Ukończ obie sesje dzisiaj, aby osiągnąć "Perfekcyjny dzień!"
+            <p class="mt-4 text-gray-600">
+                Rozpocznij swoją pierwszą sesję dzisiaj! 🚀
             </p>
         {% endif %}
+    </div>
+
+    {# Session Cards #}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {# Programming Session Card #}
+        {% set programming_completed = 'programming' in completed_categories %}
+        {% set programming_total = programming_new + programming_review %}
+
+        <div class="session-card bg-gradient-to-br from-programming-50 via-white to-programming-50 border-2 {% if programming_completed %}border-green-300 bg-green-50{% else %}border-programming-300{% endif %} rounded-2xl p-8 shadow-lg {% if programming_completed %}disabled{% endif %}">
+            <div class="flex items-center mb-6">
+                <div class="w-16 h-16 bg-gradient-to-br from-programming-500 to-programming-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <span class="text-3xl">💻</span>
+                </div>
+                <div class="ml-5">
+                    <h2 class="text-2xl font-bold text-gray-900">Programming</h2>
+                    {% if programming_completed %}
+                        <span class="inline-flex items-center text-xs font-semibold text-green-700 bg-green-100 px-2 py-1 rounded-full mt-1">
+                            ✓ Ukończone dzisiaj
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <p class="text-gray-700 mb-6 text-base leading-relaxed">
+                Słownictwo techniczne dla programistów - API, funkcje, algorytmy
+            </p>
+
+            <div class="bg-white rounded-xl p-4 mb-6 shadow-sm border border-programming-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-1">Do nauki dzisiaj</p>
+                        <p class="text-2xl font-bold text-programming-700">
+                            {% if programming_total > 0 %}
+                                {{ programming_new }} <span class="text-base font-normal text-gray-500">nowych</span>
+                                + {{ programming_review }} <span class="text-base font-normal text-gray-500">powtórka</span>
+                            {% else %}
+                                0 słówek
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-gray-500 block">Czas sesji</span>
+                        <span class="text-lg font-bold text-gray-700">~{{ (programming_total * 0.5)|round }} min</span>
+                    </div>
+                </div>
+            </div>
+
+            {% if programming_completed %}
+                <div class="w-full bg-green-100 text-green-700 font-bold py-4 px-6 rounded-xl text-center border-2 border-green-300">
+                    ✓ Sesja ukończona
+                </div>
+            {% elseif programming_total > 0 %}
+                <a href="{{ path('app_learn_programming') }}"
+                   class="block w-full bg-gradient-to-r from-programming-600 to-programming-700 hover:from-programming-700 hover:to-programming-800 text-white font-bold py-4 px-6 rounded-xl transition-all text-center shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                    Rozpocznij sesję →
+                </a>
+            {% else %}
+                <div class="w-full bg-gray-100 text-gray-500 font-medium py-4 px-6 rounded-xl text-center">
+                    Świetna robota! Wróć jutro 🎉
+                </div>
+            {% endif %}
+        </div>
+
+        {# Travel Session Card #}
+        {% set travel_completed = 'travel' in completed_categories %}
+        {% set travel_total = travel_new + travel_review %}
+
+        <div class="session-card bg-gradient-to-br from-travel-50 via-white to-travel-50 border-2 {% if travel_completed %}border-green-300 bg-green-50{% else %}border-travel-300{% endif %} rounded-2xl p-8 shadow-lg {% if travel_completed %}disabled{% endif %}">
+            <div class="flex items-center mb-6">
+                <div class="w-16 h-16 bg-gradient-to-br from-travel-500 to-travel-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <span class="text-3xl">✈️</span>
+                </div>
+                <div class="ml-5">
+                    <h2 class="text-2xl font-bold text-gray-900">Travel</h2>
+                    {% if travel_completed %}
+                        <span class="inline-flex items-center text-xs font-semibold text-green-700 bg-green-100 px-2 py-1 rounded-full mt-1">
+                            ✓ Ukończone dzisiaj
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <p class="text-gray-700 mb-6 text-base leading-relaxed">
+                Praktyczne zwroty dla podróżników - lotnisko, hotel, restauracja
+            </p>
+
+            <div class="bg-white rounded-xl p-4 mb-6 shadow-sm border border-travel-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-1">Do nauki dzisiaj</p>
+                        <p class="text-2xl font-bold text-travel-700">
+                            {% if travel_total > 0 %}
+                                {{ travel_new }} <span class="text-base font-normal text-gray-500">nowych</span>
+                                + {{ travel_review }} <span class="text-base font-normal text-gray-500">powtórka</span>
+                            {% else %}
+                                0 słówek
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-gray-500 block">Czas sesji</span>
+                        <span class="text-lg font-bold text-gray-700">~{{ (travel_total * 0.5)|round }} min</span>
+                    </div>
+                </div>
+            </div>
+
+            {% if travel_completed %}
+                <div class="w-full bg-green-100 text-green-700 font-bold py-4 px-6 rounded-xl text-center border-2 border-green-300">
+                    ✓ Sesja ukończona
+                </div>
+            {% elseif travel_total > 0 %}
+                <a href="{{ path('app_learn_travel') }}"
+                   class="block w-full bg-gradient-to-r from-travel-600 to-travel-700 hover:from-travel-700 hover:to-travel-800 text-white font-bold py-4 px-6 rounded-xl transition-all text-center shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                    Rozpocznij sesję →
+                </a>
+            {% else %}
+                <div class="w-full bg-gray-100 text-gray-500 font-medium py-4 px-6 rounded-xl text-center">
+                    Świetna robota! Wróć jutro 🎉
+                </div>
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}
