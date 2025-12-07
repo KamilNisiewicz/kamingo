@@ -1,4 +1,6 @@
 {
+    "name": "kamilnisiewicz/kamingo",
+    "description": "AI-powered language learning app with spaced repetition",
     "type": "project",
     "license": "proprietary",
     "minimum-stability": "stable",
