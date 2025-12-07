@@ -64,7 +64,7 @@ jobs:
         ('luggage', 'bagaż', 'Where can I collect my luggage?', 'travel', NOW())" --env=test
 
     - name: Run tests
-      run: php bin/phpunit --exclude-group slow
+      run: php bin/phpunit
 
     - name: Validate database schema
       run: php bin/console doctrine:schema:validate --env=test
