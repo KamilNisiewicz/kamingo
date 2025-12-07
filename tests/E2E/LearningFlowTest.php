@@ -5,10 +5,32 @@ namespace App\Tests\E2E;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\UserProgress;
+use App\Entity\SessionCompletion;
 use App\Entity\User;
 
 class LearningFlowTest extends WebTestCase
 {
+    private function clearTesterProgress($client)
+    {
+        $container = static::getContainer();
+        $em = $container->get(EntityManagerInterface::class);
+
+        $user = $em->getRepository(User::class)->findOneBy(['username' => 'tester']);
+        if ($user) {
+            // Usuń wszystkie UserProgress
+            $em->createQuery('DELETE FROM App\Entity\UserProgress up WHERE up.user = :user')
+                ->setParameter('user', $user)
+                ->execute();
+
+            // Usuń wszystkie SessionCompletion
+            $em->createQuery('DELETE FROM App\Entity\SessionCompletion sc WHERE sc.user = :user')
+                ->setParameter('user', $user)
+                ->execute();
+
+            $em->clear();
+        }
+    }
+
     private function loginAsTester($client)
     {
         $crawler = $client->request('GET', '/login');
@@ -23,6 +45,9 @@ class LearningFlowTest extends WebTestCase
     public function testCompleteProgrammingSessionFlow(): void
     {
         $client = static::createClient();
+
+        // Wyczyść stan testera
+        $this->clearTesterProgress($client);
 
         // 1. Zaloguj się
         $this->loginAsTester($client);
@@ -72,6 +97,10 @@ class LearningFlowTest extends WebTestCase
     public function testUserProgressIsPersisted(): void
     {
         $client = static::createClient();
+
+        // Wyczyść stan testera
+        $this->clearTesterProgress($client);
+
         $this->loginAsTester($client);
 
         // Start sesji programming
@@ -111,6 +140,10 @@ class LearningFlowTest extends WebTestCase
     public function testDashboardShowsCorrectProgress(): void
     {
         $client = static::createClient();
+
+        // Wyczyść stan testera
+        $this->clearTesterProgress($client);
+
         $this->loginAsTester($client);
 
         // Przejdź przez kompletną sesję programming (symulacja)
