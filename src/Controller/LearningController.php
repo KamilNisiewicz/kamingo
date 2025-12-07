@@ -176,7 +176,7 @@ class LearningController extends AbstractController
         $sessionCompletion = new SessionCompletion();
         $sessionCompletion->setUser($user);
         $sessionCompletion->setCategory($completedData['category']);
-        $sessionCompletion->setCompletedDate($today);
+        $sessionCompletion->setCompletedDate(\DateTime::createFromImmutable($today));
 
         try {
             $this->entityManager->persist($sessionCompletion);

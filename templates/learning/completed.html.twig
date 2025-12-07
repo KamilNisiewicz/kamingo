@@ -60,27 +60,20 @@
 
         {# Stats Card #}
         <div class="bg-gradient-to-br {% if category == 'programming' %}from-programming-50 to-programming-100{% else %}from-travel-50 to-travel-100{% endif %} rounded-2xl p-8 mb-8 border-2 {% if category == 'programming' %}border-programming-200{% else %}border-travel-200{% endif %}">
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                <div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                <div class="text-center">
                     <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Przejrzane karty</p>
-                    <p class="text-5xl font-bold {% if category == 'programming' %}text-programming-700{% else %}text-travel-700{% endif %}">
+                    <p class="text-6xl font-bold {% if category == 'programming' %}text-programming-700{% else %}text-travel-700{% endif %}">
                         {{ total_cards }}
                     </p>
-                    <p class="text-sm text-gray-600 mt-1">{{ total_cards == 1 ? 'karta' : (total_cards < 5 ? 'karty' : 'kart') }}</p>
+                    <p class="text-sm text-gray-600 mt-2">{{ total_cards == 1 ? 'karta' : (total_cards < 5 ? 'karty' : 'kart') }}</p>
                 </div>
-                <div>
-                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Czas sesji</p>
-                    <p class="text-5xl font-bold text-gray-700">
-                        ~{{ (total_cards * 0.5)|round }}
+                <div class="text-center">
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Interwały powtórek</p>
+                    <p class="text-3xl font-bold text-gray-700 leading-tight mt-2">
+                        1d → 3d → 7d<br>→ 14d → 30d
                     </p>
-                    <p class="text-sm text-gray-600 mt-1">minut</p>
-                </div>
-                <div>
-                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Interwały</p>
-                    <p class="text-3xl font-bold text-gray-700 leading-tight">
-                        1d → 3d<br>→ 7d
-                    </p>
-                    <p class="text-xs text-gray-500 mt-1">spaced repetition</p>
+                    <p class="text-xs text-gray-500 mt-2">spaced repetition</p>
                 </div>
             </div>
         </div>

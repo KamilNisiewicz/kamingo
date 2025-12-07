@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: kamingo_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, json
+        coverage: none
+
+    - name: Validate composer.json
+      run: composer validate --strict
+
+    - name: Install Composer dependencies
+      run: composer install --prefer-dist --no-progress
+
+    - name: Create .env.test.local
+      run: |
+        echo "DATABASE_URL=mysql://root:root@127.0.0.1:3306/kamingo?serverVersion=8.0&charset=utf8mb4" > .env.test.local
+
+    - name: Create database schema
+      run: |
+        php bin/console doctrine:schema:create --env=test
+
+    - name: Create test users
+      run: |
+        php bin/console app:create-user tester password --env=test
+
+    - name: Seed test words
+      run: |
+        php bin/console doctrine:query:sql "INSERT INTO word (word, translation, example, category, created_at) VALUES
+        ('deploy', 'wdrożyć', 'We need to deploy the application to production.', 'programming', NOW()),
+        ('refactor', 'refaktoryzować', 'Let us refactor this code to improve readability.', 'programming', NOW()),
+        ('hotel', 'hotel', 'I need to book a hotel for the weekend.', 'travel', NOW()),
+        ('airport', 'lotnisko', 'The taxi will take you to the airport.', 'travel', NOW()),
+        ('function', 'funkcja', 'This function returns a boolean value.', 'programming', NOW()),
+        ('debug', 'debugować', 'I need to debug this application.', 'programming', NOW()),
+        ('variable', 'zmienna', 'Declare a variable to store the value.', 'programming', NOW()),
+        ('array', 'tablica', 'This array contains multiple elements.', 'programming', NOW()),
+        ('ticket', 'bilet', 'I bought a ticket for the train.', 'travel', NOW()),
+        ('passport', 'paszport', 'Don''t forget your passport at home.', 'travel', NOW()),
+        ('luggage', 'bagaż', 'Where can I collect my luggage?', 'travel', NOW())" --env=test
+
+    - name: Run tests
+      run: php bin/phpunit
+
+    - name: Validate database schema
+      run: php bin/console doctrine:schema:validate --env=test
