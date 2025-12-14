@@ -4,6 +4,16 @@
 
 Aplikacja webowa do nauki języka angielskiego z wykorzystaniem spaced repetition i AI. Specjalistyczne słownictwo dla programistów (**Programming**) i podróżników (**Travel**).
 
+## Live Demo
+
+🚀 **Live app:** https://kamingo.cfolks.pl/
+
+**Test credentials:**
+- Username: `tester`
+- Password: `password`
+
+---
+
 ## Tech Stack
 
 - Symfony 7.2 + PHP 8.2
