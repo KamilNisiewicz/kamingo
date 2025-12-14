@@ -51,7 +51,6 @@ php bin/console doctrine:migrations:migrate
 
 # Create users
 php bin/console app:create-user tester password
-php bin/console app:create-user kamil password
 
 # Generate words (requires OpenRouter API key)
 php bin/console app:generate-words programming 50
@@ -67,8 +66,7 @@ Visit: http://localhost:8000
 
 ## Login
 
-- **User:** `tester` / `password`
-- **Admin:** `kamil` / `password` (admin panel: `/admin`)
+- **User:** `tester` / `password` (admin panel: `/admin`)
 
 ## Funkcjonalności
 
