@@ -38,17 +38,11 @@ class UserProgressCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            AssociationField::new('user', 'Użytkownik')
-                ->formatValue(function ($value, $entity) {
-                    return $entity->getUser()->getUsername();
-                }),
-            AssociationField::new('word', 'Słówko')
-                ->formatValue(function ($value, $entity) {
-                    return $entity->getWord()->getWord();
-                }),
+            AssociationField::new('user', 'Użytkownik'),
+            AssociationField::new('word', 'Słówko'),
             TextField::new('status', 'Status')
                 ->formatValue(function ($value) {
-                    return $value->value;
+                    return $value?->value ?? 'N/A';
                 }),
             DateTimeField::new('nextReviewDate', 'Następna powtórka')
                 ->setFormat('dd.MM.yyyy HH:mm'),
