@@ -82,6 +82,11 @@ class UserProgress
         return $this->status;
     }
 
+    public function getStatusValue(): string
+    {
+        return $this->status?->value ?? 'N/A';
+    }
+
     public function setStatus(ProgressStatus $status): static
     {
         $this->status = $status;

@@ -40,10 +40,7 @@ class UserProgressCrudController extends AbstractCrudController
         return [
             AssociationField::new('user', 'Użytkownik'),
             AssociationField::new('word', 'Słówko'),
-            TextField::new('status', 'Status')
-                ->formatValue(function ($value) {
-                    return $value?->value ?? 'N/A';
-                }),
+            TextField::new('statusValue', 'Status'),
             DateTimeField::new('nextReviewDate', 'Następna powtórka')
                 ->setFormat('dd.MM.yyyy HH:mm'),
             IntegerField::new('repetitions', 'Liczba powtórek'),
